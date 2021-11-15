@@ -1,0 +1,110 @@
+---
+title: "Numero de parches y cobertura de leñosas"
+author: "Jaume Tormo"
+date: "15/11/2021"
+output:
+  pdf_document: default
+bibliography: referencias.bib
+---
+
+```{r setup, include=FALSE}
+  knitr::opts_chunk$set(echo = TRUE)
+```
+
+Vamos a trabajar con datos de un artículo del año pasado [@Tormo2020a]
+
+## Cargar datos
+
+Primero carguemos los datos con la siguiente orden:
+
+```{r}
+dades.ori<-read.csv("Dades.csv",sep=";")
+
+```
+
+Como ves, hemos guardado los datos dentro de R en el objeto dades.ori. Veamos qué tiene dentro:
+
+```{r echo=TRUE}
+  str(dades.ori)
+```
+
+## Arreglar datos
+
+Antes de hacer el análisis, tenemos que darnos cuenta de que los datos no están en el formato correcto, si te fijas la variable WoodySpCover está guardada como "character", hay que cargarla bien. Hay que decirle que las "," son decimales y no texto:
+
+```{r}
+dades.ori <- read.csv("Dades.csv"
+                    , sep=";"
+                    , dec = ","
+                    )
+dades <- dades.ori
+
+```
+
+Ahora, con los datos bien cargados, convertimos la variable X en factor y le damos los nombres adecuados a cada variable:
+
+```{r}
+dades$X <- as.factor( dades$X )
+names( dades ) <- c( "Cuenca", "CobLen", "nParches" )
+
+```
+
+\newpage
+
+## Veamos los datos
+
+Vamos a ver como ha quedado.
+
+```{r echo=TRUE}
+str(dades.ori)
+summary(dades)
+
+```
+
+Esto ya es un df con el que poder trabajar.
+
+Veamoslos en una tabla:
+
+```{r echo=FALSE}
+knitr::kable( dades
+            , digits = c(0,2,2)
+            , col.names = c("Cuenca", "Cob. leñosas", "nº de parches")
+            , align = "lcc"
+            )
+```
+
+\newpage
+
+O en un gráfico:
+
+```{r echo=FALSE}
+plot(dades$nParches~dades$CobLen
+     , xlab = "Cobertura de leñosas (%)"
+     , ylab = "Número de parches"
+     )
+```
+
+## Un pequeño análisis
+
+```{r}
+  m <- lm( dades$nParches~dades$CobLen )
+  summary( m )
+  
+```
+
+\newpage
+
+## y añadimos la línea de tendencia al gráfico
+
+```{r}
+  plot( dades$nParches~dades$CobLen
+      , xlab = "Cobertura de leñosas (%)"
+      , ylab = "Número de parches"
+      )
+  abline( m$coefficients )
+
+```
+
+\newpage
+
+## Bibliografía
